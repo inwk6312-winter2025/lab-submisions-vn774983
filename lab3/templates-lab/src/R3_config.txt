@@ -1,0 +1,16 @@
+hostname R3
+
+interface Loopback0
+ ip address 150.1.3.3 255.255.255.255
+
+
+interface GigabitEthernet1.13
+ ip address 155.1.13.3 255.255.255.0
+ no shutdown
+
+
+router ospf 1
+ router-id 150.1.3.3
+
+ network 155.1.13.3 255.255.255.0 area 
+

@@ -1,0 +1,16 @@
+hostname R2
+
+interface Loopback0
+ ip address 150.1.2.2 255.255.255.255
+
+
+interface GigabitEthernet1.12
+ ip address 155.1.12.2 255.255.255.0
+ no shutdown
+
+
+router ospf 1
+ router-id 150.1.2.2
+
+ network 155.1.12.2 255.255.255.0 area 
+
