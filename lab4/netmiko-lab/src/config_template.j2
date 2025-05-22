@@ -1,0 +1,7 @@
+hostname {{ device.hostname }}
+
+{% for interface, details in device.interfaces.items() %}
+interface {{ interface }}
+ ip address {{ details.ip }} {{ details.mask }}
+ no shutdown
+{% endfor %}
