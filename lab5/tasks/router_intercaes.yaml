@@ -1,0 +1,41 @@
+routers:
+  router1:
+    management_ip: 192.168.1.101
+    interfaces:
+      G0/2:
+        ip: 10.1.2.1
+        netmask: 255.255.255.0
+      G0/3:
+        ip: 10.1.3.1
+        netmask: 255.255.255.0
+
+  router2:
+    management_ip: 192.168.1.102
+    interfaces:
+      G0/2:
+        ip: 10.2.2.1
+        netmask: 255.255.255.0
+      G0/3:
+        ip: 10.2.3.1
+        netmask: 255.255.255.0
+
+  router3:
+    management_ip: 192.168.1.103
+    interfaces:
+      G0/2:
+        ip: 10.3.2.1
+        netmask: 255.255.255.0
+      G0/3:
+        ip: 10.3.3.1
+        netmask: 255.255.255.0
+
+  router4:
+    management_ip: 192.168.1.104
+    interfaces:
+      G0/2:
+        ip: 10.4.2.1
+        netmask: 255.255.255.0
+      G0/3:
+        ip: 10.4.3.1
+        netmask: 255.255.255.0
+

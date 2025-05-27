@@ -1,0 +1,89 @@
+import yaml
+import requests
+from requests.auth import HTTPBasicAuth
+import json
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(name)s - %(levelname)s - %(message)s')
+
+# Load YAML config file
+def l
+# Function to set interface IP on a router using RESTCONF
+def set_interface(router_ip, user, passwd, interface_name, ip, netmask):
+    base_url = f"http://{router_ip}/restconf/api/running/interfaces/interface/{interface_name}"
+    auth = HTTPBasicAuth(user, passwd)
+    headers = {
+        'Accept': 'application/vnd.yang.data+json',
+        'Content-Type': 'application/vnd.yang.data+json'
+    }
+    data = {
+        "ietf-interfaces:interface": {
+            "name": interface_name,
+            "description": "Configured via RESTCONF script",
+            "type": "iana-if-type:ethernetCsmacd",
+            "enabled": True,
+            "ietf-ip:ipv4": {
+                "address": [
+                    {
+                        "ip": ip,
+                        "netmask": netmask
+                    }
+                ]
+            },
+            "ietf-ip:ipv6": {}
+        }
+    }
+
+    print(f"\nConfiguring router {router_ip} - Interface: {interface_name}")
+    print(f"  IP: {ip}")
+    print(f"  Netmask: {netmask}")
+
+    logging.info(f"Sending PUT to {router_ip} interface {interface_name} with IP {ip}")
+    response = requests.put(base_url, auth=auth, headers=headers, data=json.dumps(data))
+
+    if response.status_code == 204:
+        logging.info(f"Successfully configured {interface_name} on {router_ip}")
+        print(f"  Result: Success\n")
+    else:
+        logging.error(f"Failed to configure {interface_name} on {router_ip}, Status: {response.status_code}, Response: {response.text}")
+        print(f"  Result: Failed with status {response.status_code}\n")
+
+def main():
+    # Credentials for all routers (assuming same user/pass)
+    USER = 'student'
+    PASS = 'Meilab123'
+
+    # Load the YAML file with router configurations
+    config = load_config('router_interfaces.yaml')
+
+    routers = config.get('routers', {})
+
+    print("Loaded Router Configurations:")
+    for router_name, router_data in routers.items():
+        management_ip = router_data.get('management_ip')
+        interfaces = router_data.get('interfaces', {})
+
+        print(f"\nRouter: {router_name}")
+        print(f"  Management IP: {management_ip}")
+        print(f"  Interfaces:")
+        for intf_name, intf_data in interfaces.items():
+            ip = intf_data.get('ip')
+            netmask = intf_data.get('netmask')
+            print(f"    - {intf_name}: IP {ip}, Netmask {netmask}")
+
+    # Proceed to configure each interface
+    for router_name, router_data in routers.items():
+        management_ip = router_data.get('management_ip')
+        interfaces = router_data.get('interfaces', {})
+
+        for intf_name, intf_data in interfaces.items():
+            ip = intf_data.get('ip')
+            netmask = intf_data.get('netmask')
+            if management_ip and ip and netmask:
+                set_interface(management_ip, USER, PASS, intf_name, ip, netmask)
+            else:
+                logging.warning(f"Skipping {intf_name} on {router_name} due to missing data")
+
+if __name__ == '__main__':
+    main()
+
